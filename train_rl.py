@@ -1,4 +1,6 @@
 import os
+import secrets
+
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 import numpy as np
 import argparse
@@ -6,8 +8,6 @@ import json
 
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 from transformers import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
-
-import random
 import torch
 
 from gliclass import GLiClassModelConfig, GLiClassModel, ZeroShotClassificationPipeline
@@ -141,7 +141,7 @@ def main(args):
     init_ld = len(data)*1
 
     print('Dataset size:', len(data))
-    random.shuffle(data)    
+    secrets.SystemRandom().shuffle(data)    
     print('Dataset is shuffled...')
 
     train_data = data[:int(len(data)*0.9)]

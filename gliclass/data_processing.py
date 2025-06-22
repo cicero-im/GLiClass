@@ -1,7 +1,7 @@
-import random
 import torch
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
+import secrets
 
 
 class GLiClassDataset(Dataset):
@@ -62,7 +62,7 @@ class GLiClassDataset(Dataset):
     
     def tokenize_and_prepare_labels_for_uniencoder(self, example):
         if self.shuffle_labels:
-            random.shuffle(example['all_labels'])
+            secrets.SystemRandom().shuffle(example['all_labels'])
         input_text = self.prepare_prompt(example)
         if self.prompt_first:
             input_text = ''.join(input_text)+str(example['text'])
@@ -78,7 +78,7 @@ class GLiClassDataset(Dataset):
 
     def tokenize_and_prepare_labels_for_encoder_decoder(self, example):
         if self.shuffle_labels:
-            random.shuffle(example['all_labels'])
+            secrets.SystemRandom().shuffle(example['all_labels'])
         class_texts = self.prepare_prompt(example)
         class_texts = ''.join(class_texts)
 
@@ -93,7 +93,7 @@ class GLiClassDataset(Dataset):
 
     def tokenize_and_prepare_labels_for_biencoder(self, example):
         if self.shuffle_labels:
-            random.shuffle(example['all_labels'])
+            secrets.SystemRandom().shuffle(example['all_labels'])
         def prepare_prompt(labels):
             prompt_texts = []
             for label in labels:
@@ -130,9 +130,9 @@ class GLiClassDataset(Dataset):
     def __getitem__(self, idx):
         example = self._data[idx]
 
-        if self.get_negatives and random.randint(0, 1):
+        if self.get_negatives and secrets.SystemRandom().randint(0, 1):
             max_negatives = max(self.max_labels-len(example['all_labels']), 1)
-            new_negatives = random.sample(self.dataset_labels, k=random.randint(1, max_negatives))
+            new_negatives = secrets.SystemRandom().sample(self.dataset_labels, k=secrets.SystemRandom().randint(1, max_negatives))
             example['all_labels'].extend(new_negatives)
 
         if self.architecture_type == 'uni-encoder':
